@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-alpine-fiber-tah
+  namespace: tah
+  labels:
+    app: go-alpine-fiber-tah
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: go-alpine-fiber-tah
+  template:
+    metadata:
+      labels:
+        app: go-alpine-fiber-tah
+    spec:
+      containers:
+      - name: go-alpine-fiber-tah
+        image: golang:alpine
+        command:
+          - sh
+          - -c
+          - |
+            cd /app && 
+            go mod tidy && 
+            go run main.go
+            while true; do sleep 160; done
+        ports:
+        - containerPort: 3001
+        volumeMounts:
+        - name: go-code
+          mountPath: /app
+      volumes:
+      - name: go-code
+        hostPath:
+          path: /root/tah/
+          type: Directory
